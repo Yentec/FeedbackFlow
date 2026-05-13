@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  board     Board?
+  posts     Post[]
+  votes     Vote[]
+  comments  Comment[]
+  createdAt DateTime @default(now())
+}
+
+model Board {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  isPublic    Boolean  @default(true)
+  ownerId     String   @unique
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  posts       Post[]
+  categories  Category[]
+  createdAt   DateTime @default(now())
+
+  @@index([slug])
+}
+
+enum PostStatus {
+  OPEN
+  PLANNED
+  IN_PROGRESS
+  DONE
+  REJECTED
+}
+
+model Post {
+  id         String     @id @default(cuid())
+  title      String
+  content    String
+  status     PostStatus @default(OPEN)
+  boardId    String
+  board      Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  authorId   String?
+  author     User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  categoryId String?
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  votes      Vote[]
+  comments   Comment[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([boardId, status])
+  @@index([boardId, createdAt])
+}
+
+model Vote {
+  id     String @id @default(cuid())
+  postId String
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+}
+
+model Category {
+  id      String  @id @default(cuid())
+  name    String
+  color   String  @default("#6366f1")
+  boardId String
+  board   Board   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  posts   Post[]
+
+  @@unique([boardId, name])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  postId    String
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
