@@ -1,6 +1,6 @@
 {
   "name": "feedbackflow",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "private": true,
   "engines": {
     "node": ">=20.9.0"
@@ -50,7 +50,7 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "prisma": "^6.19.3",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^6.0.3"
   }
