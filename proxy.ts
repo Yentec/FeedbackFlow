@@ -5,7 +5,7 @@ import authConfig from "./auth.config";
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  const isAuthed = !!req.auth;
+  const isAuthed = !!(req.auth as { user?: unknown } | null)?.user;
   const { pathname } = req.nextUrl;
 
   const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/settings");
